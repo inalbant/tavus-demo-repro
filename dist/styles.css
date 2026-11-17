@@ -726,26 +726,33 @@ textarea {
   display: inline-flex;
   gap: 5px;
   align-items: center;
-  font-size: 8px;
+  font-size: 12px;
   font-weight: 600;
-  color: #68914f;
+}
+.source-badge,
+.source-legend .app-source {
+  color: #456a36;
 }
 .source-badge i,
 .source-legend i {
   height: 5px;
   width: 5px;
+  flex: none;
   border-radius: 50%;
   display: inline-block;
   background: currentColor;
 }
-.source-badge.screen_observed {
-  color: #638f9f;
+.source-badge.screen_observed,
+.source-legend .screen-source {
+  color: #356473;
 }
-.source-badge.customer_reported {
-  color: #9a81a2;
+.source-badge.customer_reported,
+.source-legend .customer-source {
+  color: #724b79;
 }
-.source-badge.hypothesis {
-  color: #b79654;
+.source-badge.hypothesis,
+.source-legend .hypothesis-source {
+  color: #785b24;
 }
 #report-form {
   display: grid;
@@ -757,28 +764,17 @@ textarea {
 }
 .source-legend {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
-  gap: 6px;
+  gap: 6px 12px;
   margin-bottom: 17px;
-  font-size: 7px;
-  color: #909c81;
+  font-size: 11px;
+  color: #52634b;
 }
 .source-legend > span {
   display: flex;
   align-items: center;
   gap: 4px;
-}
-.source-legend .app-source {
-  background: #7b9b5e;
-}
-.source-legend .screen-source {
-  background: #6f9daa;
-}
-.source-legend .customer-source {
-  background: #b091b1;
-}
-.source-legend .hypothesis-source {
-  background: #c5aa6b;
 }
 .copy-button {
   display: flex;
@@ -1101,9 +1097,6 @@ tavus-embed {
   }
   .report-content {
     padding: 20px;
-  }
-  .source-legend {
-    font-size: 8px;
   }
   .bar-chart {
     gap: 15px;

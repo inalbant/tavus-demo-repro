@@ -40,6 +40,25 @@ test('manual correction survives late tool updates and duplicate calls do not re
   assert.equal(h.fields.title.value, 'Export fails');
   assert.equal(h.sent.filter((m) => m.event_type === 'conversation.tool_result').length, 3);
 });
+test('an untouched report field catches up on blur after a PAL update', async () => {
+  const h = createHarness();
+  await start(h);
+  const field = h.fields.steps;
+  h.browser.document.activeElement = field;
+  await update(h.call(), 't1', { steps: ['Select All locations', 'Export the report'] });
+  assert.equal(field.value, '');
+
+  h.browser.document.activeElement = null;
+  await h.get('report-form').emit('focusout', { target: field });
+  assert.equal(field.value, 'Select All locations\nExport the report');
+
+  await update(h.call(), 't2', { steps: ['Switch to Camden'] });
+  assert.equal(field.value, 'Switch to Camden');
+
+  await h.edit('steps', 'Select Camden\n');
+  await h.get('report-form').emit('focusout', { target: field });
+  assert.equal(field.value, 'Select Camden\n');
+});
 test('reset cancels pending export and rejects events from the old embed', async () => {
   const h = createHarness();
   await start(h);
@@ -108,6 +127,39 @@ test('final review updates visible status; incomplete final request returns an a
   assert.equal(h.sent.at(-1).properties.output.review_status, 'ready');
   assert.ok(JSON.stringify(h.sent.at(-1)).length < 1500);
   await h.edit('impact', 'Meeting Thursday');
+  assert.equal(h.get('report-status').textContent, 'DRAFT');
+});
+test('replaying a final review only confirms readiness for the reviewed revision', async () => {
+  const h = createHarness();
+  await start(h);
+  await h.exportReport();
+  await update(h.call(), 'original', finalPayload);
+
+  await h.exportReport(); // An already recorded outcome leaves the review current.
+  await update(h.call(), 'original', finalPayload);
+  assert.equal(h.sent.at(-1).properties.output.review_status, 'ready');
+
+  await h.edit('impact', 'Meeting Thursday');
+  await update(h.call(), 'original', finalPayload);
+  assert.equal(h.sent.at(-1).properties.output.saved, true);
+  assert.equal(h.sent.at(-1).properties.output.review_status, 'draft');
+  assert.equal(h.fields.impact.value, 'Meeting Thursday');
+  assert.equal(h.get('report-status').textContent, 'DRAFT');
+
+  const corrected = {
+    ...finalPayload,
+    impact: 'Meeting Thursday',
+    evidence: [{ source: 'customer_reported', text: 'Meeting Thursday' }],
+  };
+  await update(h.call(), 'fresh', corrected);
+  assert.equal(h.sent.at(-1).properties.output.review_status, 'ready');
+  await update(h.call(), 'original', finalPayload);
+  assert.equal(h.sent.at(-1).properties.output.review_status, 'draft');
+  assert.equal(h.get('report-status').textContent, 'READY FOR REVIEW');
+
+  await h.exportReport('Camden');
+  await update(h.call(), 'fresh', corrected);
+  assert.equal(h.sent.at(-1).properties.output.review_status, 'draft');
   assert.equal(h.get('report-status').textContent, 'DRAFT');
 });
 test('evidence editor protects corrections and removes only PAL findings', async () => {

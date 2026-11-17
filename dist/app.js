@@ -44,7 +44,10 @@ export function createApp(browser = globalThis, settings = config) {
   } = browser;
   const $ = (id) => document.getElementById(id);
   const dashboardOnly = new URLSearchParams(location.search).get('view') === 'dashboard';
-  if (dashboardOnly) document.body.classList.add('dashboard-only');
+  if (dashboardOnly) {
+    document.body.classList.add('dashboard-only');
+    document.title = 'Northstar demo dashboard';
+  }
   let report = emptyReport(),
     call = null,
     connected = false,
@@ -60,7 +63,8 @@ export function createApp(browser = globalThis, settings = config) {
     typeof BroadcastChannel === 'function'
       ? new BroadcastChannel(`repro:${investigationId}`)
       : null;
-  let saveAttempt = 0;
+  let reportRevision = 0,
+    saveAttempt = 0;
   let toastTimer,
     evidenceEditIndex = null;
   function toast(text) {
@@ -68,6 +72,17 @@ export function createApp(browser = globalThis, settings = config) {
     $('toast').hidden = false;
     clearTimeout(toastTimer);
     toastTimer = setTimeout(() => ($('toast').hidden = true), 3500);
+  }
+  function replaceReport(nextReport) {
+    if (nextReport === report) return;
+    report = nextReport;
+    reportRevision++;
+    renderReport();
+  }
+  function syncReportField(field) {
+    const value = report[field.name];
+    if (field.name === 'title' && value === 'Untitled investigation') field.value = '';
+    else field.value = Array.isArray(value) ? value.join('\n') : (value ?? '');
   }
   function renderReport() {
     const ready = report.review_status === 'ready';
@@ -89,13 +104,7 @@ export function createApp(browser = globalThis, settings = config) {
       : 'Findings build here as you investigate.';
     $('evidence-list').replaceChildren(...report.evidence.map(createEvidenceCard));
     for (const field of $('report-form').elements) {
-      if (!field.name || document.activeElement === field) continue;
-      const v = report[field.name];
-      field.value = Array.isArray(v)
-        ? v.join('\n')
-        : v === 'Untitled investigation'
-          ? ''
-          : (v ?? '');
+      if (field.name && document.activeElement !== field) syncReportField(field);
     }
   }
   function createEvidenceCard(item, index) {
@@ -138,9 +147,9 @@ export function createApp(browser = globalThis, settings = config) {
     return card;
   }
   function changeEvidence(index, text) {
-    report = reviseEvidence(report, index, text);
+    const nextReport = reviseEvidence(report, index, text);
     editedFields.add('evidence');
-    renderReport();
+    replaceReport(nextReport);
     appendContext(
       'The customer edited the evidence list. Preserve it; do not reintroduce removed claims. ' +
         JSON.stringify({ evidence: palReport().evidence }),
@@ -178,8 +187,7 @@ export function createApp(browser = globalThis, settings = config) {
     }
   }
   function recordExport(event) {
-    report = applyApplicationEvent(report, event);
-    renderReport();
+    replaceReport(applyApplicationEvent(report, event));
     // Keep telemetry as an independent local cross-check, not a shortcut for perception.
   }
   function listenToDashboard() {
@@ -281,12 +289,18 @@ export function createApp(browser = globalThis, settings = config) {
     const { name, value } = e.target;
     if (!name) return;
     editedFields.add(name);
-    report[name] = ['steps', 'open_questions'].includes(name)
+    const editedValue = ['steps', 'open_questions'].includes(name)
       ? value.split('\n').filter((x) => x.trim())
       : value;
-    report.review_status = 'draft';
-    report.questions_assessed = false;
-    renderReport();
+    replaceReport({
+      ...report,
+      [name]: editedValue,
+      review_status: 'draft',
+      questions_assessed: false,
+    });
+  });
+  $('report-form').addEventListener('focusout', ({ target }) => {
+    if (target.name && !editedFields.has(target.name)) syncReportField(target);
   });
   $('report-form').addEventListener('change', () =>
     appendContext(
@@ -350,8 +364,7 @@ export function createApp(browser = globalThis, settings = config) {
           ? new BroadcastChannel(`repro:${investigationId}`)
           : null;
       listenToDashboard();
-      report = emptyReport();
-      renderReport();
+      replaceReport(emptyReport());
       $('location').value = 'All locations';
       $('period').selectedIndex = 0;
       updateMetrics();
@@ -392,22 +405,9 @@ export function createApp(browser = globalThis, settings = config) {
         throw new Error('Customer is editing evidence. Wait until they finish before retrying.');
       }
       // saveReportUpdate returns only after validation, so rejection preserves the draft.
-      report = saveReportUpdate(report, payload, editedFields);
-      renderReport();
+      replaceReport(saveReportUpdate(report, payload, editedFields));
       showSaveError('');
-      return {
-        status: 'success',
-        output: {
-          saved: true,
-          review_status: report.review_status,
-          missing_fields: missingReportFields(report),
-          protected_fields: [...editedFields],
-          note:
-            report.review_status === 'ready'
-              ? 'Complete draft saved locally. Invite the customer to check accuracy and copy it. Nothing was submitted externally. Manual edits remain authoritative.'
-              : 'Draft saved locally. Continue investigating; submit mode final_review with every report field before final readback. Nothing was submitted externally.',
-        },
-      };
+      return null;
     } catch (error) {
       const message =
         error instanceof SyntaxError ? 'Report update must contain valid JSON.' : error.message;
@@ -416,6 +416,30 @@ export function createApp(browser = globalThis, settings = config) {
       );
       return { status: 'error', output: { saved: false, error: message } };
     }
+  }
+
+  function savedToolResult(current) {
+    let note =
+      'Draft saved locally. Continue investigating; submit mode final_review with every report field before final readback.';
+    if (!current) {
+      note =
+        report.review_status === 'ready'
+          ? 'This update was saved earlier. Use the newer confirmed final review for readback.'
+          : 'This update was saved earlier. The report has since changed. Submit a new complete final review before readback.';
+    } else if (report.review_status === 'ready') {
+      note =
+        'Complete draft saved locally. Invite the customer to check accuracy and copy it. Manual edits remain authoritative.';
+    }
+    return {
+      status: 'success',
+      output: {
+        saved: true,
+        review_status: current ? report.review_status : 'draft',
+        missing_fields: missingReportFields(report),
+        protected_fields: [...editedFields],
+        note: `${note} Nothing was submitted externally.`,
+      },
+    };
   }
 
   async function handleTool(detail, element) {
@@ -431,15 +455,17 @@ export function createApp(browser = globalThis, settings = config) {
     }
     if (name !== 'update_bug_report') return;
 
-    // Re-delivery replays the original result without applying the update twice.
+    // Re-delivery acknowledges the original save and checks whether its review is still current.
     let savedCall = tool_call_id && processedCalls.get(tool_call_id);
     if (!savedCall) {
-      savedCall = { result: saveToolArguments(detail.arguments), attempt: ++saveAttempt };
+      const rejection = saveToolArguments(detail.arguments);
+      savedCall = { rejection, revision: reportRevision, attempt: ++saveAttempt };
       if (tool_call_id) processedCalls.set(tool_call_id, savedCall);
     }
     if (!tool_call_id) return;
 
-    const { result, attempt } = savedCall;
+    const { rejection, revision, attempt } = savedCall;
+    const result = rejection ?? savedToolResult(revision === reportRevision);
     try {
       await element.sendMessage({
         event_type: 'conversation.tool_result',
