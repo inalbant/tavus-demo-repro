@@ -1,5 +1,7 @@
 # Repro — Visual Bug Investigator
 
+**Live demo:** [Open Repro](https://reprotavuspal.netlify.app/)
+
 A Tavus CVI interview demo that turns a customer's screen-shared bug into a structured engineering handoff. A PAL asks follow-up questions, observes the shared dashboard, and saves findings beside the call through one application tool.
 
 ## Try the demo
@@ -20,8 +22,8 @@ Use a desktop browser with camera, microphone and screen-sharing permissions. Th
 Requires Python 3 and Node.js 22 or later. There are no npm dependencies to install.
 
 ```sh
-git clone https://github.com/inalbant/tavus-demo.git
-cd tavus-demo
+git clone https://github.com/inalbant/tavus-demo-repro.git
+cd tavus-demo-repro
 npm run dev
 ```
 
@@ -69,7 +71,7 @@ The MVP is intentionally one PAL, one application tool and one seeded bug. There
 
 The 29 automated tests cover validation, correction replacement, evidence protection, review completeness, stale/reset isolation, duplicate calls, export timing, compact replies, transport errors and clipboard fallback. The host tests import the real ESM application with injected DOM/transport doubles and assert visible state and sent messages; they do not rewrite source or inspect private variables. Coverage includes the app module, but does not cover native rendering or the external Tavus embed. GitHub Actions runs syntax checks, all tests and the preview build on pushes to main and pull requests.
 
-A local browser smoke check on 17 November verified module loading, the seeded export failure, a Camden export, separate-window event propagation, manual report-field edits, the guide dialog and reset isolation. It did not start a voice/video call. Local user-run acceptance on 15 November verified a populated final report and a Wednesday deadline correction. The evidence editor has automated coverage; a successful manual edit was not separately confirmed. Hosted call acceptance is still required after deployment and origin configuration.
+A local browser smoke check on 17 November verified module loading, the seeded export failure, a Camden export, separate-window event propagation, manual report-field edits, the guide dialog and reset isolation. It did not start a voice/video call. Local user-run acceptance on 15 November verified a populated final report and a Wednesday deadline correction. The evidence editor has automated coverage; a successful manual edit was not separately confirmed. Hosted embed loading was verified on 17 November after adding the Netlify origin; a complete hosted voice/video investigation still needs acceptance testing.
 
 Known limitation: a historical failed call showed the PAL claiming success after the host rejected a save. Save rejections and failed result delivery now have persistent, distinct messages above both report views. A successful subsequent save or delivery retry clears the relevant message; old acknowledgements cannot hide a newer error. These UI safeguards do not guarantee the PAL's spoken compliance. Check the visible report rather than relying only on spoken acknowledgements.
 

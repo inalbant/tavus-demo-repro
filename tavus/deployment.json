@@ -3,7 +3,7 @@
   "pal_id": "p24d6faf7528",
   "channel": "embed",
   "status": "active",
-  "allowed_origins": ["http://localhost:4173"],
+  "allowed_origins": ["http://localhost:4173", "https://reprotavuspal.netlify.app"],
   "limits": {
     "starts_per_minute": null,
     "daily_call_limit": 20,
