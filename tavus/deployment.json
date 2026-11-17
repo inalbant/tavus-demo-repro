@@ -1,0 +1,17 @@
+{
+  "deployment_id": "72129414-789e-48c8-bf89-9b86e005a7f8",
+  "pal_id": "p24d6faf7528",
+  "channel": "embed",
+  "status": "active",
+  "allowed_origins": [
+    "http://localhost:4173"
+  ],
+  "limits": {
+    "starts_per_minute": null,
+    "daily_call_limit": 20,
+    "daily_call_limit_per_user": 20,
+    "concurrent_call_limit": 1,
+    "max_call_duration": 600
+  },
+  "unique_memory_per_visitor": false
+}

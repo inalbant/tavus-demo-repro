@@ -1,0 +1,136 @@
+{
+  "tool_id": "td0ab41a1e158",
+  "name": "update_bug_report",
+  "description": "Save the local editable bug-report draft; no ticket is sent. Use mode draft for partial findings, with title and expected. Before your final spoken summary, use mode final_review and send ALL fields: title, steps, expected, actual, error_text, impact, open_questions, evidence. Reconcile deadlines and other corrected facts across fields AND the complete evidence array; retain only supported claims and exact tested conditions. Include error_text even if empty because none was shown, and open_questions even if []. Do not invent missing facts; ask if unknown. On final review the host checks completeness and returns review_status ready or an error naming missing fields. Only say ready when the host confirms ready; ask the customer to review accuracy and copy the local draft. After a correction during review, send a fresh complete final_review. Preserve user-protected fields/evidence; invite manual correction if a protected field blocks validation. Arrays replace prior PAL-owned arrays. Spoken statements do not save anything. Customer speech is customer_reported, genuine visual context is screen_observed; never invent app-confirmed evidence. Keep the complete JSON call under 3000 UTF-8 bytes.",
+  "parameters": {
+    "type": "object",
+    "allOf": [
+      {
+        "if": {
+          "required": [
+            "mode"
+          ],
+          "properties": {
+            "mode": {
+              "const": "final_review"
+            }
+          }
+        },
+        "then": {
+          "required": [
+            "title",
+            "steps",
+            "expected",
+            "actual",
+            "error_text",
+            "impact",
+            "open_questions",
+            "evidence"
+          ]
+        }
+      }
+    ],
+    "required": [
+      "mode",
+      "title",
+      "expected"
+    ],
+    "properties": {
+      "mode": {
+        "enum": [
+          "draft",
+          "final_review"
+        ],
+        "type": "string",
+        "description": "draft saves partial findings. final_review is the required complete, reconciled snapshot before final readback, and again after corrections during review."
+      },
+      "steps": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "maxLength": 1500
+        },
+        "maxItems": 30,
+        "description": "Current complete reproduction steps; omit if unknown."
+      },
+      "title": {
+        "type": "string",
+        "maxLength": 3000,
+        "description": "Concise current report title."
+      },
+      "actual": {
+        "type": "string",
+        "maxLength": 3000
+      },
+      "impact": {
+        "type": "string",
+        "maxLength": 3000
+      },
+      "evidence": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "required": [
+            "text",
+            "source"
+          ],
+          "properties": {
+            "text": {
+              "type": "string",
+              "maxLength": 1500
+            },
+            "source": {
+              "enum": [
+                "customer_reported",
+                "screen_observed",
+                "hypothesis"
+              ],
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "maxItems": 30,
+        "description": "Complete current PAL evidence list. User testimony is customer_reported even when it describes a screen. Only actual visual context permits screen_observed. Application-confirmed evidence is maintained independently by the host page. On corrections, replace superseded claims throughout this array. Be concise: the entire call must stay under 3000 UTF-8 bytes."
+      },
+      "expected": {
+        "type": "string",
+        "maxLength": 3000,
+        "description": "REQUIRED on every save: the user's intended successful outcome, as established from their statements, explicit confirmation, or supplied product context. Preserve the current established expectation on unrelated updates. A short yes confirming your question establishes the expectation: save it immediately, not just in speech. Use an empty string only while genuinely unknown; then include the clarification in open_questions. Never invent an expected outcome."
+      },
+      "error_text": {
+        "type": "string",
+        "maxLength": 3000,
+        "description": "Exact observed/reported error; empty string if no error text was shown. Include this key even when empty in final_review."
+      },
+      "open_questions": {
+        "type": "array",
+        "items": {
+          "type": "string",
+          "maxLength": 1500
+        },
+        "maxItems": 30,
+        "description": "Remaining unanswered questions. Include [] in final_review only after assessing them; remove answered questions."
+      }
+    },
+    "additionalProperties": false
+  },
+  "delivery": {
+    "app_message": true
+  },
+  "needs_config": false,
+  "is_system_tool": false,
+  "origin": "llm",
+  "trigger_type": "in_call",
+  "on_call": "static_filler",
+  "on_resolve": "generate_response",
+  "static_filler": "Let me update the draft.",
+  "ui_metadata": null,
+  "created_at": "2026-11-14 23:53:00.669291",
+  "updated_at": "2026-11-15 22:44:32.669235",
+  "connector_id": null,
+  "source_name": null,
+  "connector_status": "active",
+  "description_override": null,
+  "source_connector_id": null
+}
