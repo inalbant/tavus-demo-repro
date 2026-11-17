@@ -1,1 +1,14 @@
-{"name":"repro-visual-bug-lab","private":true,"type":"module","scripts":{"dev":"python3 -m http.server 4173 --directory dist","test":"node --test tests/*.test.mjs"}}
+{
+  "name": "repro-visual-bug-lab",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server 4173 --directory dist",
+    "test": "node --test tests/*.test.mjs",
+    "check": "node --check dist/bootstrap.js && node --check dist/app.js && node --check dist/report.js && node --check dist/sandbox.js",
+    "test:coverage": "node --test --experimental-test-coverage tests/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

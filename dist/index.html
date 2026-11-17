@@ -1,15 +1,353 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="Show the problem. Leave with a clear engineering handoff. Repro is a visual bug investigator powered by Tavus."><title>Repro — Show the problem.</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232a4036'/%3E%3Cpath d='M18 44V20h15a9 9 0 0 1 0 18H18m13-1 13 9' stroke='%23d0ef9c' stroke-width='6' fill='none'/%3E%3C/svg%3E"><link rel="stylesheet" href="styles.css"></head>
-<body>
-<header class="app-header"><a class="brand" href="./" aria-label="Repro home"><span class="brand-mark">r<span>↗</span></span>repro<span class="brand-dot">.</span></a><span class="header-tag">THE VISUAL BUG INVESTIGATOR</span><div class="header-actions"><button id="guide-button" class="text-button">How to demo <span>↗</span></button><button id="reset-button" class="outline-button">New investigation</button></div></header>
-<main>
-<section class="intro"><div><div class="eyebrow"><span class="little-star">✳</span> LESS BACK-AND-FORTH. MORE CONTEXT.</div><h1>Show the problem.<br><span>We’ll get the details.</span></h1><p>A conversation for your customer. A clear handoff for your engineers.</p></div><div class="intro-note"><span class="note-line"></span><p>See it together.<br>Ask the right question.<br><strong>Make it reproducible.</strong></p></div></section>
-<div class="workspace">
-<section class="investigator panel" aria-label="Repro conversation"><div class="panel-top"><span class="section-label">01 / INVESTIGATE</span><span id="call-status" class="status-pill"><i></i>Not connected</span></div><div id="call-container" class="call-container"><div id="call-placeholder" class="call-placeholder"><div class="orb"><span>r.</span></div><div><h2>Meet your second pair of eyes.</h2><p>Repro watches your screen, asks focused questions, and gathers the details that matter.</p></div><a id="pal-test-link" class="primary-button" hidden target="_blank" rel="noopener">Test Repro in Tavus ↗</a><p id="setup-note" class="setup-note">Standalone PAL test only: this link cannot update the report below. Embedded calls are not configured yet.</p></div></div><div class="call-caption"><span class="tiny-icon">▣</span><p>Start a call, then share the <strong>demo dashboard</strong> using the call’s screen-share control.</p></div><div class="investigator-bottom"><span>Powered by <strong>Tavus CVI</strong></span><span>AI support partner</span></div></section>
-<section class="dashboard panel" aria-label="Demo reporting dashboard"><div class="panel-top"><span class="section-label">02 / REPRODUCE</span><button id="dashboard-window" class="text-button small">Open separately ↗</button></div><div class="product-header"><span class="product-logo">✳</span><strong>northstar</strong><span class="demo-badge">DEMO PRODUCT</span></div><div class="product-nav"><span>Overview</span><strong>Reports</strong><span>Activity</span></div><div class="dashboard-body"><div class="dashboard-heading"><div><div class="eyebrow muted">YOUR BUSINESS, AT A GLANCE</div><h2>Weekly performance</h2></div><span class="calendar-icon">▦</span></div><div class="filters"><label>Location<select id="location"><option value="All locations">All locations</option><option>Camden</option><option>Enfield</option><option>Shoreditch</option></select></label><label>Reporting period<select id="period"><option>2–8 Nov 2026</option><option>26 Oct–1 Nov 2026</option></select></label></div><div class="metrics"><div><span>Revenue</span><strong id="revenue">£48,260</strong><small>↗ 12.8% <span>vs. previous week</span></small></div><div><span>Orders</span><strong id="orders">1,284</strong><small>↗ 8.2% <span>vs. previous week</span></small></div></div><div class="chart-title"><strong>Revenue this week</strong><span>GBP</span></div><div class="bar-chart" role="img" aria-label="Illustrative daily revenue bar chart"><div class="grid-lines"></div><div class="bar" style="--height:48%"><span>Mon</span></div><div class="bar" style="--height:65%"><span>Tue</span></div><div class="bar" style="--height:57%"><span>Wed</span></div><div class="bar" style="--height:82%"><span>Thu</span></div><div class="bar" style="--height:72%"><span>Fri</span></div><div class="bar" style="--height:96%"><span>Sat</span></div><div class="bar" style="--height:68%"><span>Sun</span></div></div><div class="export-area"><div><strong>Take your numbers with you.</strong><p>Download this view as a CSV report.</p></div><button id="export-button" class="dark-button">↓ Export report</button></div><div id="export-result" class="export-result neutral" role="status" aria-live="polite"><span>↳</span><div><strong>Ready to export</strong><p>Your report will use the filters selected above.</p></div></div></div><div class="dashboard-footer"><span class="dot"></span>Sandbox data · safe to experiment</div></section>
-<section class="report panel" aria-label="Engineering handoff"><div class="panel-top"><span class="section-label">03 / HAND OFF</span><span id="report-status" class="draft-pill">DRAFT</span></div><div class="report-heading"><div class="eyebrow muted">THE ENGINEERING HANDOFF</div><h2 id="report-title">The details,<br>without the chase.</h2><p id="report-subtitle">Findings build here as you investigate.</p></div><p id="review-note" class="review-note" role="status" aria-live="polite"></p><div class="report-tabs" role="tablist" aria-label="Report views"><button id="evidence-tab" role="tab" aria-selected="true" aria-controls="evidence-panel">Evidence <span id="evidence-count">0</span></button><button id="details-tab" role="tab" aria-selected="false" aria-controls="details-panel">Report</button></div><div id="evidence-panel" class="report-content" role="tabpanel" aria-labelledby="evidence-tab"><div id="evidence-lock-note" class="review-note" hidden>Your evidence edits are protected from AI updates. App events still accumulate. <button id="allow-evidence-updates" class="text-button">Allow AI evidence updates</button></div><div id="evidence-list"></div><div id="empty-evidence" class="empty-state"><span class="empty-icon">⌁</span><h3>Start with what happened.</h3><p>Try an export in the dashboard. Each finding keeps its source, so a guess stays a guess.</p></div></div><div id="details-panel" class="report-content" role="tabpanel" aria-labelledby="details-tab" hidden><p class="local-note">Your edits take priority over AI updates until New investigation.</p><form id="report-form"><label>Report title<input name="title" placeholder="A concise description of the issue"></label><label>Steps to reproduce<textarea name="steps" placeholder="One step per line" rows="3"></textarea></label><label>Expected behaviour<textarea name="expected" rows="2" placeholder="What should have happened?"></textarea></label><label>Actual behaviour<textarea name="actual" rows="2" placeholder="What happened instead?"></textarea></label><label>Error text<input name="error_text" placeholder="Exact message, if known"></label><label>Customer impact<textarea name="impact" rows="2" placeholder="Why does this matter to the customer?"></textarea></label><label>Open questions<textarea name="open_questions" rows="2" placeholder="One question per line"></textarea></label></form></div><div class="report-footer"><div class="source-legend"><span><i class="app-source"></i>App</span><span><i class="screen-source"></i>Screen</span><span><i class="customer-source"></i>Customer</span><span><i class="hypothesis-source"></i>Hypothesis</span></div><button id="copy-button" class="copy-button">Copy report <span>↗</span></button><span class="local-note">Draft resets on reload; report context is shared with Tavus.</span></div></section>
-</div><footer class="page-footer"><span>Built for the moments a ticket form can’t capture.</span><button id="architecture-button" class="text-button">Under the hood ↗</button></footer>
-</main>
-<dialog id="evidence-dialog" aria-labelledby="evidence-edit-heading"><button class="dialog-close" aria-label="Close evidence editor">×</button><h2 id="evidence-edit-heading">Correct this evidence</h2><p>The original source label stays attached. Your changes protect the PAL evidence list until you allow AI updates again.</p><form id="evidence-edit-form"><label>Evidence text<textarea id="evidence-edit-text" rows="5" maxlength="1500" required></textarea></label><p id="evidence-edit-error" role="alert"></p><button type="submit" class="dark-button">Save correction</button></form></dialog><dialog id="guide-dialog"><button class="dialog-close" aria-label="Close dialog">×</button><div class="eyebrow">A THREE-MINUTE WALKTHROUGH</div><h2>Give Repro a real problem.</h2><ol><li><strong>Start the conversation.</strong> Say: “I’m trying to download my weekly report, but it keeps failing.”</li><li><strong>Share the dashboard.</strong> Open it separately if you want to share only the fictional product.</li><li><strong>Try an export.</strong> Leave “All locations” selected. Let Repro ask what to try next.</li><li><strong>Compare another case.</strong> Switch to a single location and try again. Tell Repro why you need the report.</li><li><strong>Review the handoff.</strong> Correct any details, then copy the report.</li></ol><p class="dialog-note">This is a deliberately seeded product bug. The PAL should investigate it from your conversation and shared screen.</p></dialog>
-<dialog id="architecture-dialog"><button class="dialog-close" aria-label="Close dialog">×</button><div class="eyebrow">SMALL SURFACE. COMPLETE LOOP.</div><h2>From conversation to evidence.</h2><div class="architecture-list"><p><strong>Tavus CVI</strong> hosts the live conversation. Raven observes the shared screen; the PAL chooses its next question.</p><p><strong>One application tool</strong>, <code>update_bug_report</code>, sends structured findings to this page. The handler validates the payload, updates the draft and sends a tool result back.</p><p><strong>Application events</strong> record actual sandbox export outcomes independently. The PAL cannot label its own claims as app-confirmed.</p><p><strong>Browser-local state</strong> keeps this MVP small. No ticket publishing, account data, or automatic diagnosis.</p></div></dialog><div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-<script type="module" src="app.js"></script></body></html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Show the problem. Leave with a clear engineering handoff. Repro is a visual bug investigator powered by Tavus."
+    />
+    <title>Repro — Show the problem.</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%232a4036'/%3E%3Cpath d='M18 44V20h15a9 9 0 0 1 0 18H18m13-1 13 9' stroke='%23d0ef9c' stroke-width='6' fill='none'/%3E%3C/svg%3E"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">
+      <a class="brand" href="./" aria-label="Repro home"
+        ><span class="brand-mark">r<span>↗</span></span
+        >repro<span class="brand-dot">.</span></a
+      ><span class="header-tag">THE VISUAL BUG INVESTIGATOR</span>
+      <div class="header-actions">
+        <button id="guide-button" class="text-button">How to demo <span>↗</span></button
+        ><button id="reset-button" class="outline-button">New investigation</button>
+      </div>
+    </header>
+    <main>
+      <section class="intro">
+        <div>
+          <div class="eyebrow">
+            <span class="little-star">✳</span> LESS BACK-AND-FORTH. MORE CONTEXT.
+          </div>
+          <h1>Show the problem.<br /><span>We’ll get the details.</span></h1>
+          <p>A conversation for your customer. A clear handoff for your engineers.</p>
+        </div>
+        <div class="intro-note">
+          <span class="note-line"></span>
+          <p>
+            See it together.<br />Ask the right question.<br /><strong
+              >Make it reproducible.</strong
+            >
+          </p>
+        </div>
+      </section>
+      <div class="workspace">
+        <section class="investigator panel" aria-label="Repro conversation">
+          <div class="panel-top">
+            <span class="section-label">01 / INVESTIGATE</span
+            ><span id="call-status" class="status-pill"><i></i>Not connected</span>
+          </div>
+          <div id="call-container" class="call-container">
+            <div id="call-placeholder" class="call-placeholder">
+              <div class="orb"><span>r.</span></div>
+              <div>
+                <h2>Meet your second pair of eyes.</h2>
+                <p>
+                  Repro watches your screen, asks focused questions, and gathers the details that
+                  matter.
+                </p>
+              </div>
+              <a id="pal-test-link" class="primary-button" hidden target="_blank" rel="noopener"
+                >Test Repro in Tavus ↗</a
+              >
+              <p id="setup-note" class="setup-note">
+                Standalone PAL test only: this link cannot update the report below. Embedded calls
+                are not configured yet.
+              </p>
+            </div>
+          </div>
+          <div class="call-caption">
+            <span class="tiny-icon">▣</span>
+            <p>
+              Start a call, then share the <strong>demo dashboard</strong> using the call’s
+              screen-share control.
+            </p>
+          </div>
+          <div class="investigator-bottom">
+            <span>Powered by <strong>Tavus CVI</strong></span
+            ><span>AI support partner</span>
+          </div>
+        </section>
+        <section class="dashboard panel" aria-label="Demo reporting dashboard">
+          <div class="panel-top">
+            <span class="section-label">02 / REPRODUCE</span
+            ><button id="dashboard-window" class="text-button small">Open separately ↗</button>
+          </div>
+          <div class="product-header">
+            <span class="product-logo">✳</span><strong>northstar</strong
+            ><span class="demo-badge">DEMO PRODUCT</span>
+          </div>
+          <div class="product-nav">
+            <span>Overview</span><strong>Reports</strong><span>Activity</span>
+          </div>
+          <div class="dashboard-body">
+            <div class="dashboard-heading">
+              <div>
+                <div class="eyebrow muted">YOUR BUSINESS, AT A GLANCE</div>
+                <h2>Weekly performance</h2>
+              </div>
+              <span class="calendar-icon">▦</span>
+            </div>
+            <div class="filters">
+              <label
+                >Location<select id="location">
+                  <option value="All locations">All locations</option>
+                  <option>Camden</option>
+                  <option>Enfield</option>
+                  <option>Shoreditch</option>
+                </select></label
+              ><label
+                >Reporting period<select id="period">
+                  <option>2–8 Nov 2026</option>
+                  <option>26 Oct–1 Nov 2026</option>
+                </select></label
+              >
+            </div>
+            <div class="metrics">
+              <div>
+                <span>Revenue</span><strong id="revenue">£48,260</strong
+                ><small>↗ 12.8% <span>vs. previous week</span></small>
+              </div>
+              <div>
+                <span>Orders</span><strong id="orders">1,284</strong
+                ><small>↗ 8.2% <span>vs. previous week</span></small>
+              </div>
+            </div>
+            <div class="chart-title"><strong>Revenue this week</strong><span>GBP</span></div>
+            <div class="bar-chart" role="img" aria-label="Illustrative daily revenue bar chart">
+              <div class="grid-lines"></div>
+              <div class="bar" style="--height: 48%"><span>Mon</span></div>
+              <div class="bar" style="--height: 65%"><span>Tue</span></div>
+              <div class="bar" style="--height: 57%"><span>Wed</span></div>
+              <div class="bar" style="--height: 82%"><span>Thu</span></div>
+              <div class="bar" style="--height: 72%"><span>Fri</span></div>
+              <div class="bar" style="--height: 96%"><span>Sat</span></div>
+              <div class="bar" style="--height: 68%"><span>Sun</span></div>
+            </div>
+            <div class="export-area">
+              <div>
+                <strong>Take your numbers with you.</strong>
+                <p>Download this view as a CSV report.</p>
+              </div>
+              <button id="export-button" class="dark-button">↓ Export report</button>
+            </div>
+            <div id="export-result" class="export-result neutral" role="status" aria-live="polite">
+              <span>↳</span>
+              <div>
+                <strong>Ready to export</strong>
+                <p>Your report will use the filters selected above.</p>
+              </div>
+            </div>
+          </div>
+          <div class="dashboard-footer">
+            <span class="dot"></span>Sandbox data · safe to experiment
+          </div>
+        </section>
+        <section class="report panel" aria-label="Engineering handoff">
+          <div class="panel-top">
+            <span class="section-label">03 / HAND OFF</span
+            ><span id="report-status" class="draft-pill">DRAFT</span>
+          </div>
+          <div class="report-heading">
+            <div class="eyebrow muted">THE ENGINEERING HANDOFF</div>
+            <h2 id="report-title">The details,<br />without the chase.</h2>
+            <p id="report-subtitle">Findings build here as you investigate.</p>
+          </div>
+          <p id="review-note" class="review-note" role="status" aria-live="polite"></p>
+          <p id="save-error" class="save-error" role="alert" hidden></p>
+          <div class="report-tabs" role="tablist" aria-label="Report views">
+            <button
+              id="evidence-tab"
+              role="tab"
+              aria-selected="true"
+              aria-controls="evidence-panel"
+            >
+              Evidence <span id="evidence-count">0</span></button
+            ><button
+              id="details-tab"
+              role="tab"
+              aria-selected="false"
+              aria-controls="details-panel"
+            >
+              Report
+            </button>
+          </div>
+          <div
+            id="evidence-panel"
+            class="report-content"
+            role="tabpanel"
+            aria-labelledby="evidence-tab"
+          >
+            <div id="evidence-lock-note" class="review-note" hidden>
+              Your evidence edits are protected from AI updates. App events still accumulate.
+              <button id="allow-evidence-updates" class="text-button">
+                Allow AI evidence updates
+              </button>
+            </div>
+            <div id="evidence-list"></div>
+            <div id="empty-evidence" class="empty-state">
+              <span class="empty-icon">⌁</span>
+              <h3>Start with what happened.</h3>
+              <p>
+                Try an export in the dashboard. Each finding keeps its source, so a guess stays a
+                guess.
+              </p>
+            </div>
+          </div>
+          <div
+            id="details-panel"
+            class="report-content"
+            role="tabpanel"
+            aria-labelledby="details-tab"
+            hidden
+          >
+            <p class="local-note">
+              Your edits take priority over AI updates until New investigation.
+            </p>
+            <form id="report-form">
+              <label
+                >Report title<input
+                  name="title"
+                  placeholder="A concise description of the issue" /></label
+              ><label
+                >Steps to reproduce<textarea
+                  name="steps"
+                  placeholder="One step per line"
+                  rows="3"
+                ></textarea></label
+              ><label
+                >Expected behaviour<textarea
+                  name="expected"
+                  rows="2"
+                  placeholder="What should have happened?"
+                ></textarea></label
+              ><label
+                >Actual behaviour<textarea
+                  name="actual"
+                  rows="2"
+                  placeholder="What happened instead?"
+                ></textarea></label
+              ><label
+                >Error text<input name="error_text" placeholder="Exact message, if known" /></label
+              ><label
+                >Customer impact<textarea
+                  name="impact"
+                  rows="2"
+                  placeholder="Why does this matter to the customer?"
+                ></textarea></label
+              ><label
+                >Open questions<textarea
+                  name="open_questions"
+                  rows="2"
+                  placeholder="One question per line"
+                ></textarea>
+              </label>
+            </form>
+          </div>
+          <div class="report-footer">
+            <div class="source-legend">
+              <span><i class="app-source"></i>App</span
+              ><span><i class="screen-source"></i>Screen</span
+              ><span><i class="customer-source"></i>Customer</span
+              ><span><i class="hypothesis-source"></i>Hypothesis</span>
+            </div>
+            <button id="copy-button" class="copy-button">Copy report <span>↗</span></button
+            ><span class="local-note"
+              >Draft resets on reload; report context is shared with Tavus.</span
+            >
+          </div>
+        </section>
+      </div>
+      <footer class="page-footer">
+        <span>Built for the moments a ticket form can’t capture.</span
+        ><button id="architecture-button" class="text-button">Under the hood ↗</button>
+      </footer>
+    </main>
+    <dialog id="evidence-dialog" aria-labelledby="evidence-edit-heading">
+      <button class="dialog-close" aria-label="Close evidence editor">×</button>
+      <h2 id="evidence-edit-heading">Correct this evidence</h2>
+      <p>
+        The original source label stays attached. Your changes protect the PAL evidence list until
+        you allow AI updates again.
+      </p>
+      <form id="evidence-edit-form">
+        <label
+          >Evidence text<textarea
+            id="evidence-edit-text"
+            rows="5"
+            maxlength="1500"
+            required
+          ></textarea>
+        </label>
+        <p id="evidence-edit-error" role="alert"></p>
+        <button type="submit" class="dark-button">Save correction</button>
+      </form>
+    </dialog>
+    <dialog id="guide-dialog">
+      <button class="dialog-close" aria-label="Close dialog">×</button>
+      <div class="eyebrow">A THREE-MINUTE WALKTHROUGH</div>
+      <h2>Give Repro a real problem.</h2>
+      <ol>
+        <li>
+          <strong>Start the conversation.</strong> Say: “I’m trying to download my weekly report,
+          but it keeps failing.”
+        </li>
+        <li>
+          <strong>Share the dashboard.</strong> Open it separately if you want to share only the
+          fictional product.
+        </li>
+        <li>
+          <strong>Try an export.</strong> Leave “All locations” selected. Let Repro ask what to try
+          next.
+        </li>
+        <li>
+          <strong>Compare another case.</strong> Switch to a single location and try again. Tell
+          Repro why you need the report.
+        </li>
+        <li><strong>Review the handoff.</strong> Correct any details, then copy the report.</li>
+      </ol>
+      <p class="dialog-note">
+        This is a deliberately seeded product bug. The PAL should investigate it from your
+        conversation and shared screen.
+      </p>
+    </dialog>
+    <dialog id="architecture-dialog">
+      <button class="dialog-close" aria-label="Close dialog">×</button>
+      <div class="eyebrow">SMALL SURFACE. COMPLETE LOOP.</div>
+      <h2>From conversation to evidence.</h2>
+      <div class="architecture-list">
+        <p>
+          <strong>Tavus CVI</strong> hosts the live conversation. Raven observes the shared screen;
+          the PAL chooses its next question.
+        </p>
+        <p>
+          <strong>One application tool</strong>, <code>update_bug_report</code>, sends structured
+          findings to this page. The handler validates the payload, updates the draft and sends a
+          tool result back.
+        </p>
+        <p>
+          <strong>Application events</strong> record actual sandbox export outcomes independently.
+          The PAL cannot label its own claims as app-confirmed.
+        </p>
+        <p>
+          <strong>Browser-local state</strong> keeps this MVP small. No ticket publishing, account
+          data, or automatic diagnosis.
+        </p>
+      </div>
+    </dialog>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+    <script type="module" src="bootstrap.js"></script>
+  </body>
+</html>

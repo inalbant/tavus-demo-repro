@@ -7,9 +7,7 @@
     "allOf": [
       {
         "if": {
-          "required": [
-            "mode"
-          ],
+          "required": ["mode"],
           "properties": {
             "mode": {
               "const": "final_review"
@@ -30,17 +28,10 @@
         }
       }
     ],
-    "required": [
-      "mode",
-      "title",
-      "expected"
-    ],
+    "required": ["mode", "title", "expected"],
     "properties": {
       "mode": {
-        "enum": [
-          "draft",
-          "final_review"
-        ],
+        "enum": ["draft", "final_review"],
         "type": "string",
         "description": "draft saves partial findings. final_review is the required complete, reconciled snapshot before final readback, and again after corrections during review."
       },
@@ -70,21 +61,14 @@
         "type": "array",
         "items": {
           "type": "object",
-          "required": [
-            "text",
-            "source"
-          ],
+          "required": ["text", "source"],
           "properties": {
             "text": {
               "type": "string",
               "maxLength": 1500
             },
             "source": {
-              "enum": [
-                "customer_reported",
-                "screen_observed",
-                "hypothesis"
-              ],
+              "enum": ["customer_reported", "screen_observed", "hypothesis"],
               "type": "string"
             }
           },
