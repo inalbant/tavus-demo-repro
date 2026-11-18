@@ -44,7 +44,7 @@ Import this repository into Netlify using the `main` branch. Leave the build com
 
 Before testing calls, add the exact HTTPS origin assigned by Netlify to the Tavus embed deployment's **allowed origins**, alongside `http://localhost:4173`. A custom domain or a changed Netlify site name needs its own matching origin. The page loading successfully does not establish that calls can connect.
 
-For an independent deployment, configure your own Tavus PAL and application tool using the snapshots in `tavus/`, create an embed deployment, and set its ID in `dist/config.js`. A deployment ID is public configuration, not an API key. Snapshots describe the configuration recorded on 15 November 2026; live account settings may change separately.
+For an independent deployment, configure your own Tavus PAL and application tool using the snapshots in `tavus/`, create an embed deployment, and set its ID in `dist/config.js`. A deployment ID is public configuration. The PAL prompt snapshot was refreshed on 18 November 2026. Live account settings may change separately.
 
 ## How it works
 
